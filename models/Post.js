@@ -20,6 +20,10 @@ const Post = sequelize.define(
             type: DataTypes.TEXT,
             allowNull: false,
         },
+        meta: {
+            type: DataTypes.TEXT,
+            allowNull: true,
+        },
     },
     {
         /**

@@ -12,7 +12,9 @@ const UserModel = require("./models/User");
 
 const {
     addArticle,
-    getAllArticles} = require('./utility');
+    getAllArticles,
+    authorizeUser,
+    addUser} = require('./utility');
 
 
 const initApp = async () => {
@@ -42,9 +44,16 @@ app.get('/', async(req,res)=>{
     res.redirect('/login');
 })
 app.get('/login', async(req,res)=>{
-    res.status(200).send("Entered Login Page");
+    try{
+        console.log("req.query", req.query);
+        let userAuthorized = await authorizeUser(req.query);
+        userAuthorized? res.status(200).send({message:"Entered Login Page"}): res.status(403).send({message:"Forbidden"});
+    }catch(err){
+        console.log("Error while loggin in>>", err);
+        res.status(400).send({message:"Couldn't login"})
+    }
 })
-app.get('/articles', async(req,res)=>{
+app.get('/getArticles', async(req,res)=>{
     try{
         let allArticles = await getAllArticles();
         let response = {};
@@ -70,6 +79,17 @@ app.post('/submitArticle', async(req,res)=>{
         console.log("body received>>", req.body);
         await addArticle(req.body);
         res.status(201).send({"response": "Article Submitted Successfully"});
+
+    }catch(err){
+        console.log("error while submitting article: ", err);
+        res.status(401).send("Article Upload Failed");
+    }
+})
+app.post('/addUser', async(req,res)=>{
+    try{
+        console.log("User Details received>>", req.body);
+        await addUser(req.body);
+        res.status(201).send({"response": "User Created Successfully"});
 
     }catch(err){
         console.log("error while submitting article: ", err);
