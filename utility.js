@@ -21,7 +21,7 @@ let addArticle = async ({title, content, imgUrl="", authorId=""})=>{
 let getAllArticles = async()=>{
     try{
         let allArticles = await PostModel.findAll();
-        console.log("allArticles>",allArticles);
+        // console.log("allArticles>",allArticles);
         return allArticles;
     }catch(err){
         console.log("error while getting articles in getAllArticles: ", err);
@@ -39,7 +39,8 @@ let authorizeUser = async({email, password})=>{
                 }
             });
         console.log("password match>",userDetails.password === password);
-        return(userDetails.password === password);
+        console.log(userDetails.password === password? userDetails.id : "null");
+        return (userDetails.password === password? userDetails.id : null)
     }catch(err){
         console.log("error while getting articles in getAllArticles: ", err);
         return false;
@@ -50,13 +51,16 @@ let addUser = async({email, password, name})=>{
     console.log("USer email>>", email);
     console.log("USer password>>", password);
     try{
-        await UserModel.create({
+        let userCreated = await UserModel.create({
             name: name,
             email: email,
             password: password
         })
+        console.log("user ID created>>", userCreated.id);
+        return userCreated.id;
     }catch(err){
         console.log("error while add new User: ", err);
+        return null;
     }
 }
 

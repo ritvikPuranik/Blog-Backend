@@ -46,8 +46,8 @@ app.get('/', async(req,res)=>{
 app.get('/login', async(req,res)=>{
     try{
         console.log("req.query", req.query);
-        let userAuthorized = await authorizeUser(req.query);
-        userAuthorized? res.status(200).send({message:"Entered Login Page"}): res.status(403).send({message:"Forbidden"});
+        let userId = await authorizeUser(req.query);
+        userId? res.status(200).send({message:"Entered Login Page", ID: userId}): res.status(403).send({message:"Forbidden"});
     }catch(err){
         console.log("Error while loggin in>>", err);
         res.status(400).send({message:"Couldn't login"})
@@ -85,11 +85,14 @@ app.post('/submitArticle', async(req,res)=>{
         res.status(401).send("Article Upload Failed");
     }
 })
-app.post('/addUser', async(req,res)=>{
+app.post('/signup', async(req,res)=>{
     try{
         console.log("User Details received>>", req.body);
-        await addUser(req.body);
-        res.status(201).send({"response": "User Created Successfully"});
+        let userID = await addUser(req.body);
+        res.status(201).send({
+            "response": "User Created Successfully",
+            "ID": userID
+        });
 
     }catch(err){
         console.log("error while submitting article: ", err);
