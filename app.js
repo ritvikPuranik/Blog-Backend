@@ -12,6 +12,7 @@ const UserModel = require("./models/User");
 
 const {
     addArticle,
+    viewArticle,
     getAllArticles,
     authorizeUser,
     addUser} = require('./utility');
@@ -23,12 +24,7 @@ const initApp = async () => {
         await db.authenticate();
         console.log("Connection has been established successfully.");
 
-        PostModel.sync({
-            alter: true,
-        });
-        UserModel.sync({
-            alter: true,
-        });
+        db.sync();
 
         app.listen(port, () => {
             console.log(`Server is up and running at: http://localhost:${port}`);
@@ -55,7 +51,7 @@ app.get('/login', async(req,res)=>{
 })
 app.get('/getArticles', async(req,res)=>{
     try{
-        let allArticles = await getAllArticles();
+        let allArticles = await getAllArticles(req.query.id);
         let response = {};
         if(allArticles){
             response = {
@@ -70,6 +66,16 @@ app.get('/getArticles', async(req,res)=>{
         }
     }catch(err){
         console.log("Error while fetching all Articles>>", err);
+    }
+})
+
+app.get('/viewArticle/:id', async(req, res)=>{
+    try{
+        let articleContent = await viewArticle(req.params.id);
+        articleContent.id ? res.status(200).send({"result": articleContent}) : res.status(404).send({"result": "Article Not Found"});
+    }catch(err){
+        console.log("error while viewing Article>", err);
+        res.status(404).send({"result":"Article Not Found"});
     }
 })
 

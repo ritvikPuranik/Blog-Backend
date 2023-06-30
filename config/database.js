@@ -1,7 +1,4 @@
-/**
- * Import Sequelize.
- */
- const Sequelize = require("sequelize");
+const Sequelize = require("sequelize");
 
  /**
   * Create a Sequelize instance. This can be done by passing

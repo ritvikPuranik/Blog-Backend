@@ -1,8 +1,7 @@
 const PostModel = require("./models/Post");
-const User = require("./models/User");
 const UserModel = require("./models/User");
 
-let addArticle = async ({title, content, imgUrl="", authorId=""})=>{
+let addArticle = async ({title, content, imgUrl="", userId})=>{
     console.log("entered add article", title, content, imgUrl);
     let meta = {
         imgUrl:imgUrl
@@ -11,16 +10,26 @@ let addArticle = async ({title, content, imgUrl="", authorId=""})=>{
         PostModel.create({
             title: title,
             content: content,
-            meta:JSON.stringify(meta)
+            meta:JSON.stringify(meta),
+            userId: userId
         })
     }catch(err){
         console.log("error while creating article addArticle: ", err);
     }
 }
 
-let getAllArticles = async()=>{
+let getAllArticles = async(id)=>{
+    let allArticles;
     try{
-        let allArticles = await PostModel.findAll();
+        if(id==="all"){
+            allArticles = await PostModel.findAll();
+        }else{
+            allArticles = await PostModel.findAll({
+                where:{
+                    userId: id
+                }
+            });
+        }
         // console.log("allArticles>",allArticles);
         return allArticles;
     }catch(err){
@@ -64,9 +73,34 @@ let addUser = async({email, password, name})=>{
     }
 }
 
+let viewArticle = async(articleId)=>{
+    try{
+        let articleContent = await PostModel.findOne({ 
+            where: {
+                 id: articleId
+                }
+            });
+            let result = {};
+            if(articleContent){
+                result = {
+                    "id": articleContent.id,
+                    "title": articleContent.title,
+                    "content": articleContent.content
+                }
+            }
+            console.log("result for viewArticle >", result);
+            return result;
+
+    }catch(err){
+        console.log("error while fetching content: ", err);
+        return null;
+    }
+}
+
 module.exports = {
     addArticle,
     getAllArticles,
     authorizeUser,
-    addUser
+    addUser,
+    viewArticle
 }

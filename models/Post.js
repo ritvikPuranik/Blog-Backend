@@ -24,11 +24,15 @@ const Post = sequelize.define(
             type: DataTypes.TEXT,
             allowNull: true,
         },
-    },
-    {
-        /**
-         * Other model options go here
-         */
+        // userId: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: false,
+        //     references: {
+        //         model: 'users',
+        //         key: 'id'
+        //       }
+        // },
+        
     }
 );
 
